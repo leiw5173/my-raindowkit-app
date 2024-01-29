@@ -11,7 +11,7 @@ import { goerli, mainnet, polygon, sepolia } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 
 const neox: Chain = {
-  id: 12227329,
+  id: 12227330,
   name: "NeoX",
   network: "testnet",
   iconUrl: "/NEO_512_512.png",
@@ -26,8 +26,8 @@ const neox: Chain = {
     default: { http: ["https://neoxseed1.ngd.network:444/"] },
   },
   blockExplorers: {
-    default: { name: "NeoXScan", url: "https://xt1scan.ngd.network/" },
-    etherscan: { name: "NeoXScan", url: "https://xt1scan.ngd.network/" },
+    default: { name: "NeoXScan", url: "https://xt2scan.ngd.network/" },
+    etherscan: { name: "NeoXScan", url: "https://xt2scan.ngd.network/" },
   },
   testnet: true,
 };
@@ -45,7 +45,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 
 const { connectors } = getDefaultWallets({
   appName: "RainbowKit App",
-  projectId: "YOUR_PROJECT_ID",
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "PROJECT_ID",
   chains,
 });
 
