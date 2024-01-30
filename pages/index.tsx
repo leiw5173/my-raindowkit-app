@@ -3,6 +3,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { SendGAS } from "./ui/sendGAS";
+import OrderTable from "./ui/orderTable";
 
 const Home: NextPage = () => {
   return (
@@ -19,6 +20,7 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <ConnectButton />
         <SendGAS />
+        <OrderTable />
 
         <h1 className={styles.title}>
           Welcome to <a href="">RainbowKit</a> + <a href="">wagmi</a> +{" "}
