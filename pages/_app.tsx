@@ -44,7 +44,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: "RainbowKit App",
+  appName: "IOT Marketplace",
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "PROJECT_ID",
   chains,
 });

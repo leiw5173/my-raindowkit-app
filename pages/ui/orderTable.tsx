@@ -9,24 +9,25 @@ export default function OrderTable() {
     abi: orderAbi,
     functionName: "getOrder",
     args: [1],
-    onSuccess: (data) => {
-      console.log(data);
-    },
   });
 
   let order: Order | undefined;
 
   if (data) {
     order = {
-      orderId: (data as any)[0],
+      orderId: Number((data as any)[0]),
       buyer: (data as any)[1],
       seller: (data as any)[2],
-      price: (data as any)[3],
+      price: Number((data as any)[3]) / 10 ** 10,
       name: (data as any)[4],
       status: (data as any)[5],
     };
   }
-  console.log(order);
+
+  if (isError) console.log("Error");
+  if (isLoading) {
+    return <div>Loading</div>;
+  }
 
   return (
     <table>
@@ -41,14 +42,9 @@ export default function OrderTable() {
         </tr>
       </thead>
       <tbody>
-        {isLoading && (
-          <tr>
-            <td colSpan={6}>Loading...</td>
-          </tr>
-        )}
         {order && (
           <tr key={order.orderId}>
-            <td>{order.orderId.toString()}</td>
+            <td>{order.orderId}</td>
             <td>{order.buyer}</td>
             <td>{order.seller}</td>
             <td>{order.price}</td>
