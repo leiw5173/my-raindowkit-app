@@ -1,9 +1,11 @@
 import { useContractRead } from "wagmi";
 import { orderAbi } from "../lib/abi";
 import { Order } from "../lib/definitaions";
+import { useEffect, useState } from "react";
 
 export default function OrderTable() {
   const ORDER_ADDR = process.env.NEXT_PUBLIC_ORDER_ADDR || "0x";
+  const [order, setOrder] = useState<Order | undefined>(undefined);
   const { data, isError, isLoading } = useContractRead({
     address: `0x${ORDER_ADDR}`,
     abi: orderAbi,
@@ -11,23 +13,23 @@ export default function OrderTable() {
     args: [1],
   });
 
-  let order: Order | undefined;
-
-  if (data) {
-    order = {
-      orderId: Number((data as any)[0]),
-      buyer: (data as any)[1],
-      seller: (data as any)[2],
-      price: Number((data as any)[3]) / 10 ** 10,
-      name: (data as any)[4],
-      status: (data as any)[5],
-    };
-  }
+  useEffect(() => {
+    if (data) {
+      setOrder({
+        orderId: Number((data as any)[0]),
+        buyer: (data as any)[1],
+        seller: (data as any)[2],
+        price: Number((data as any)[3]) / 10 ** 10,
+        name: (data as any)[4],
+        status: (data as any)[5],
+      });
+    }
+  }, [data]);
 
   if (isError) console.log("Error");
-  if (isLoading) {
-    return <div>Loading</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading</div>;
+  // }
 
   return (
     <table>
@@ -42,6 +44,18 @@ export default function OrderTable() {
         </tr>
       </thead>
       <tbody>
+        {/* {isLoading && (
+          <tr className="skeleton-row">
+            <td colSpan={6}>
+              <div className="skeleton"></div>
+              <div className="skeleton"></div>
+              <div className="skeleton"></div>
+              <div className="skeleton"></div>
+              <div className="skeleton"></div>
+              <div className="skeleton"></div>
+            </td>
+          </tr>
+        )} */}
         {order && (
           <tr key={order.orderId}>
             <td>{order.orderId}</td>
