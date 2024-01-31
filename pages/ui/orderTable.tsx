@@ -32,19 +32,25 @@ export default function OrderTable() {
   // }
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Order ID</th>
-          <th>Buyer Address</th>
-          <th>Seller Address</th>
-          <th>Price</th>
-          <th>Product Name</th>
-          <th>Stutus</th>
-        </tr>
-      </thead>
-      <tbody>
-        {/* {isLoading && (
+    <div>
+      <h1>Order Table</h1>
+      <a href="./createorder">
+        <button>Create Order</button>
+      </a>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Buyer Address</th>
+            <th>Seller Address</th>
+            <th>Price</th>
+            <th>Product Name</th>
+            <th>Stutus</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* {isLoading && (
           <tr className="skeleton-row">
             <td colSpan={6}>
               <div className="skeleton"></div>
@@ -56,17 +62,18 @@ export default function OrderTable() {
             </td>
           </tr>
         )} */}
-        {order && (
-          <tr key={order.orderId}>
-            <td>{order.orderId}</td>
-            <td>{order.buyer}</td>
-            <td>{order.seller}</td>
-            <td>{order.price}</td>
-            <td>{order.name}</td>
-            <td>{order.status}</td>
-          </tr>
-        )}
-      </tbody>
-    </table>
+          {order && (
+            <tr key={order.orderId}>
+              <td>{order.orderId}</td>
+              <td>{order.buyer}</td>
+              <td>{order.seller}</td>
+              <td>{order.price}</td>
+              <td>{order.name}</td>
+              <td>{order.status}</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }

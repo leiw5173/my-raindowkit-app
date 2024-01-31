@@ -33,7 +33,7 @@ export default function Page() {
     abi: orderAbi,
     functionName: "setPriceAndGoods",
     args: [productName, parseInt(price) * 10 ** 10],
-    enabled: Boolean(productName.length > 0 && price.length > 0),
+    enabled: Boolean(productName.length > 0 && parseInt(price) > 0),
   });
 
   const { data, write } = useContractWrite(config);
@@ -41,7 +41,7 @@ export default function Page() {
   const { isLoading, isSuccess } = useWaitForTransaction({ hash: data?.hash });
 
   return (
-    <div>
+    <main>
       <div>
         <ConnectButton />
       </div>
@@ -91,6 +91,9 @@ export default function Page() {
           </div>
         )}
       </form>
-    </div>
+      <a href="./">
+        <button>Back To Order List</button>
+      </a>
+    </main>
   );
 }
