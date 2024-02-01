@@ -22,8 +22,8 @@ const neox: Chain = {
     symbol: "GAS",
   },
   rpcUrls: {
-    public: { http: ["https://neoxseed1.ngd.network:444/"] },
-    default: { http: ["https://neoxseed1.ngd.network:444/"] },
+    public: { http: ["https://neoxseed1.ngd.network/"] },
+    default: { http: ["https://neoxseed1.ngd.network/"] },
   },
   blockExplorers: {
     default: { name: "NeoXScan", url: "https://xt2scan.ngd.network/" },
