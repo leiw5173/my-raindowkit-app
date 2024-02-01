@@ -5,24 +5,17 @@ import { useEffect, useState } from "react";
 
 export default function OrderTable() {
   const ORDER_ADDR = process.env.NEXT_PUBLIC_ORDER_ADDR || "0x";
-  const [order, setOrder] = useState<Order | undefined>(undefined);
+  const [orders, setOrders] = useState<Order[] | undefined>(undefined);
   const { data, isError, isLoading } = useContractRead({
     address: `0x${ORDER_ADDR}`,
     abi: orderAbi,
-    functionName: "getOrder",
-    args: [1],
+    functionName: "getOrders",
+    args: [],
   });
 
   useEffect(() => {
-    if (data) {
-      setOrder({
-        orderId: Number((data as any)[0]),
-        buyer: (data as any)[1],
-        seller: (data as any)[2],
-        price: Number((data as any)[3]) / 10 ** 10,
-        name: (data as any)[4],
-        status: (data as any)[5],
-      });
+    if (data && Array.isArray(data)) {
+      setOrders(data);
     }
   }, [data]);
 
@@ -47,6 +40,7 @@ export default function OrderTable() {
             <th>Price</th>
             <th>Product Name</th>
             <th>Stutus</th>
+            <th>Edit</th>
           </tr>
         </thead>
         <tbody>
@@ -62,16 +56,18 @@ export default function OrderTable() {
             </td>
           </tr>
         )} */}
-          {order && (
-            <tr key={order.orderId}>
-              <td>{order.orderId}</td>
-              <td>{order.buyer}</td>
-              <td>{order.seller}</td>
-              <td>{order.price}</td>
-              <td>{order.name}</td>
-              <td>{order.status}</td>
-            </tr>
-          )}
+          {orders?.map((order) => {
+            return (
+              <tr key={order.orderId}>
+                <td>{Number(order.orderId)}</td>
+                <td>{order.buyer}</td>
+                <td>{order.seller}</td>
+                <td>{Number(order.price) / 10 ** 10}</td>
+                <td>{order.name}</td>
+                <td>{order.status}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
