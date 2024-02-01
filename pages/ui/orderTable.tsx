@@ -2,6 +2,7 @@ import { useContractRead } from "wagmi";
 import { orderAbi } from "../lib/abi";
 import { Order } from "../lib/definitaions";
 import { useEffect, useState } from "react";
+import { UpdateOrder, DeleteOrder } from "./buttons";
 
 export default function OrderTable() {
   const ORDER_ADDR = process.env.NEXT_PUBLIC_ORDER_ADDR || "0x";
@@ -65,6 +66,12 @@ export default function OrderTable() {
                 <td>{Number(order.price) / 10 ** 10}</td>
                 <td>{order.name}</td>
                 <td>{order.status}</td>
+                <td>
+                  <div className="flex justify-end gap-3">
+                    <UpdateOrder id={order.orderId} />
+                    <DeleteOrder id={order.orderId} />
+                  </div>
+                </td>
               </tr>
             );
           })}
