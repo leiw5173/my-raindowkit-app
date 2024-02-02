@@ -90,34 +90,41 @@ export const orderAbi = [
     name: "getOrder",
     outputs: [
       {
-        internalType: "uint256",
+        components: [
+          {
+            internalType: "uint256",
+            name: "orderId",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "buyer",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "seller",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "price",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "name",
+            type: "string",
+          },
+          {
+            internalType: "enum Exchange.OrderStatus",
+            name: "status",
+            type: "uint8",
+          },
+        ],
+        internalType: "struct Exchange.OrderInfo",
         name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-      {
-        internalType: "enum Exchange.OrderStatus",
-        name: "",
-        type: "uint8",
+        type: "tuple",
       },
     ],
     stateMutability: "view",
