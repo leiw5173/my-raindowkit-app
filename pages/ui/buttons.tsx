@@ -19,7 +19,7 @@ export function UpdateOrder({ id }: { id: number }) {
       href={`/updateorder/${id}/edit`}
       className="rounded-md border p-2 hover:bg-gray-100"
     >
-      <button>Upodate Order</button>
+      <button>Update Order</button>
     </Link>
   );
 }
@@ -94,10 +94,10 @@ export function DepositeOrder({ id, price }: { id: number; price: number }) {
   useEffect(() => {
     if (isSuccessApprove) {
       write?.();
-      refreshPage();
     }
     if (isSuccess) {
       alert("Order Deposited");
+      refreshPage();
     }
     if (isError || isErrorApprove) {
       alert("Error");
