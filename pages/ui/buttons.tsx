@@ -19,7 +19,7 @@ export function UpdateOrder({ id }: { id: number }) {
       href={`/updateorder/${id}/edit`}
       className="rounded-md border p-2 hover:bg-gray-100"
     >
-      <button>Upodate Order</button>
+      <button>Update Order</button>
     </Link>
   );
 }
