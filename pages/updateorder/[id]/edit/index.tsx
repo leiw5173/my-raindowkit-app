@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import {
   usePrepareContractWrite,
@@ -15,20 +15,22 @@ export default function Page() {
   const [productName, setProductName] = useState<string>("");
   const [price, setPrice] = useState("");
   const ORDER_ADDR = process.env.NEXT_PUBLIC_ORDER_ADDR || "0x";
-  console.log(id);
 
+  console.log(id);
   const { data: orderData }: { data: Order | undefined } = useContractRead({
     address: `0x${ORDER_ADDR}`,
     abi: orderAbi,
     functionName: "getOrder",
-    args: [parseInt(id as string)],
+    args: [id],
   });
+
+  console.log(orderData);
 
   const { config } = usePrepareContractWrite({
     address: `0x${ORDER_ADDR}`,
     abi: orderAbi,
     functionName: "updateOrder",
-    args: [productName, parseInt(price) * 10 ** 10],
+    args: [id, productName, parseInt(price) * 10 ** 10],
     enabled: Boolean(productName.length > 0 && parseInt(price) > 0),
   });
 

@@ -1,9 +1,5 @@
 import Link from "next/link";
-import {
-  PencilIcon,
-  TrashIcon,
-  PaperAirplaneIcon,
-} from "@heroicons/react/24/outline";
+import { unstable_noStore as noStore } from "next/cache";
 import {
   usePrepareContractWrite,
   useContractWrite,
@@ -13,13 +9,17 @@ import {
 import { orderAbi } from "@/pages/lib/abi";
 import { useEffect } from "react";
 
+const refreshPage = () => {
+  window.location.reload();
+};
+
 export function UpdateOrder({ id }: { id: number }) {
   return (
     <Link
       href={`/updateorder/${id}/edit`}
       className="rounded-md border p-2 hover:bg-gray-100"
     >
-      <PencilIcon className="h-5 w-5 text-gray-500" />
+      <button>Upodate Order</button>
     </Link>
   );
 }
@@ -41,6 +41,7 @@ export function DeleteOrder({ id }: { id: number }) {
   useEffect(() => {
     if (isSuccess) {
       alert("Order Deleted");
+      refreshPage();
     }
     if (isError) {
       alert("Error");
@@ -55,7 +56,6 @@ export function DeleteOrder({ id }: { id: number }) {
       disabled={isLoading}
     >
       Delete Order
-      <TrashIcon title="Delete Order" />
     </button>
   );
 }
@@ -73,8 +73,11 @@ export function DepositeOrder({ id, price }: { id: number; price: number }) {
 
   const { data: dataApprove, write: writeApprove } =
     useContractWrite(configApporve);
-  const { isSuccess: isSuccessApprove, isError: isErrorApprove } =
-    useWaitForTransaction({ hash: dataApprove?.hash });
+  const {
+    isSuccess: isSuccessApprove,
+    isError: isErrorApprove,
+    isLoading: isLoadingApprove,
+  } = useWaitForTransaction({ hash: dataApprove?.hash });
 
   const { config } = usePrepareContractWrite({
     address: `0x${ORDER_ADDR}`,
@@ -91,6 +94,7 @@ export function DepositeOrder({ id, price }: { id: number; price: number }) {
   useEffect(() => {
     if (isSuccessApprove) {
       write?.();
+      refreshPage();
     }
     if (isSuccess) {
       alert("Order Deposited");
@@ -98,7 +102,7 @@ export function DepositeOrder({ id, price }: { id: number; price: number }) {
     if (isError || isErrorApprove) {
       alert("Error");
     }
-  }, [isSuccess, isError, isSuccessApprove, isErrorApprove, write]);
+  }, [isSuccess, isError, isSuccessApprove, isErrorApprove]);
 
   return (
     <div>
@@ -107,11 +111,47 @@ export function DepositeOrder({ id, price }: { id: number; price: number }) {
           writeApprove?.();
         }}
         className="rounded-md border p-2 hover:bg-gray-100"
-        disabled={isLoading}
+        disabled={isLoading || isLoadingApprove}
       >
         Purchase Order
-        <PaperAirplaneIcon className="w-5" />
       </button>
     </div>
+  );
+}
+
+export function ReceiveOrder({ id }: { id: number }) {
+  const ORDER_ADDR = process.env.NEXT_PUBLIC_ORDER_ADDR || "0x";
+
+  const { config } = usePrepareContractWrite({
+    address: `0x${ORDER_ADDR}`,
+    abi: orderAbi,
+    functionName: "receiveGoods",
+    args: [id],
+  });
+
+  const { data, write } = useContractWrite(config);
+  const { isLoading, isSuccess, isError } = useWaitForTransaction({
+    hash: data?.hash,
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      alert("Order Received");
+      refreshPage();
+    }
+    if (isError) {
+      alert("Error");
+    }
+  }, [isSuccess, isError]);
+
+  return (
+    <button
+      onClick={() => {
+        write?.();
+      }}
+      disabled={isLoading}
+    >
+      Receive Goods
+    </button>
   );
 }

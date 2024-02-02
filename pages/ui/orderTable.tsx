@@ -2,10 +2,23 @@ import { useContractRead } from "wagmi";
 import { orderAbi } from "../lib/abi";
 import { Order } from "../lib/definitaions";
 import { useEffect, useState } from "react";
-import { UpdateOrder, DeleteOrder, DepositeOrder } from "./buttons";
+import {
+  UpdateOrder,
+  DeleteOrder,
+  DepositeOrder,
+  ReceiveOrder,
+} from "./buttons";
 
 export default function OrderTable() {
   const ORDER_ADDR = process.env.NEXT_PUBLIC_ORDER_ADDR || "0x";
+  const STATUS_MAP: { [index: number]: string } = {
+    0: "Created",
+    1: "Deposited",
+    2: "Finished",
+    3: "Updated",
+    4: "Cancelled",
+  };
+
   const [orders, setOrders] = useState<Order[] | undefined>(undefined);
   const { data, isError, isLoading } = useContractRead({
     address: `0x${ORDER_ADDR}`,
@@ -57,28 +70,28 @@ export default function OrderTable() {
             </td>
           </tr>
         )} */}
-          {orders?.map((order) => {
-            return (
-              <tr key={order.orderId}>
-                <td>{Number(order.orderId)}</td>
-                <td>{order.buyer}</td>
-                <td>{order.seller}</td>
-                <td>{Number(order.price) / 10 ** 10}</td>
-                <td>{order.name}</td>
-                <td>{order.status}</td>
-                <td>
-                  <div className="flex justify-end gap-3">
-                    <UpdateOrder id={order.orderId} />
-                  </div>
-                  <div className="flex justify-end gap-3">
-                    <DeleteOrder id={order.orderId} />
-                  </div>
-                  <div className="flex justify-end gap-3">
-                    <DepositeOrder id={order.orderId} price={order.price} />
-                  </div>
-                </td>
-              </tr>
-            );
+          {orders?.map((order: Order) => {
+            if (order.status !== 2 && order.status !== 4)
+              return (
+                <tr key={order.orderId}>
+                  <td>{Number(order.orderId)}</td>
+                  <td>{order.buyer}</td>
+                  <td>{order.seller}</td>
+                  <td>{Number(order.price) / 10 ** 10}</td>
+                  <td>{order.name}</td>
+                  <td>{STATUS_MAP[order.status]}</td>
+                  <td>
+                    <div className="flex justify-end gap-3">
+                      <UpdateOrder id={order.orderId} />
+
+                      <DeleteOrder id={order.orderId} />
+
+                      <DepositeOrder id={order.orderId} price={order.price} />
+                      <ReceiveOrder id={order.orderId} />
+                    </div>
+                  </td>
+                </tr>
+              );
           })}
         </tbody>
       </table>
