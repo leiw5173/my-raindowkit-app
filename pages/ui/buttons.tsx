@@ -94,10 +94,10 @@ export function DepositeOrder({ id, price }: { id: number; price: number }) {
   useEffect(() => {
     if (isSuccessApprove) {
       write?.();
-      refreshPage();
     }
     if (isSuccess) {
       alert("Order Deposited");
+      refreshPage();
     }
     if (isError || isErrorApprove) {
       alert("Error");

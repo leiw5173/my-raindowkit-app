@@ -43,8 +43,8 @@ export default function Page() {
       <div>
         <ConnectButton />
       </div>
-      <h1>Create Order</h1>
-      <p>Fill out the form below to create an order.</p>
+      <h1>Update Order</h1>
+      <p>Fill out the form below to update an order.</p>
       <form
         onSubmit={(e) => {
           e.preventDefault();
