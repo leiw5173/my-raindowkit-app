@@ -1,4 +1,4 @@
-import { useContractRead } from "wagmi";
+import { useReadContract } from "wagmi";
 import { orderAbi } from "../lib/abi";
 import { Order } from "../lib/definitaions";
 import { useEffect, useState } from "react";
@@ -20,7 +20,7 @@ export default function OrderTable() {
   };
 
   const [orders, setOrders] = useState<Order[] | undefined>(undefined);
-  const { data, isError, isLoading } = useContractRead({
+  const { data, isError, isLoading } = useReadContract({
     address: `0x${ORDER_ADDR}`,
     abi: orderAbi,
     functionName: "getOrders",

@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
-import {
-  usePrepareContractWrite,
-  useContractWrite,
-  useWaitForTransaction,
-  erc20ABI,
-} from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { erc20Abi } from "viem";
 import { orderAbi } from "@/pages/lib/abi";
 import { useEffect } from "react";
 
@@ -27,20 +23,13 @@ export function UpdateOrder({ id }: { id: number }) {
 export function DeleteOrder({ id }: { id: number }) {
   const ORDER_ADDR = process.env.NEXT_PUBLIC_ORDER_ADDR || "0x";
 
-  const { config } = usePrepareContractWrite({
-    address: `0x${ORDER_ADDR}`,
-    abi: orderAbi,
-    functionName: "cancelOrderBySeller",
-    args: [id],
-  });
-
-  const { data, write } = useContractWrite(config);
-  const { isLoading, isSuccess, isError } = useWaitForTransaction({
-    hash: data?.hash,
+  const { data: hash, writeContract, isPending } = useWriteContract();
+  const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
+    hash: hash,
   });
   useEffect(() => {
     if (isSuccess) {
-      alert("Order Deleted");
+      alert(`Order Deleted: ${hash}`);
       refreshPage();
     }
     if (isError) {
@@ -51,11 +40,16 @@ export function DeleteOrder({ id }: { id: number }) {
   return (
     <button
       onClick={() => {
-        write?.();
+        writeContract?.({
+          address: `0x${ORDER_ADDR}`,
+          abi: orderAbi,
+          functionName: "cancelOrderBySeller",
+          args: [id],
+        });
       }}
-      disabled={isLoading}
+      disabled={isPending}
     >
-      Delete Order
+      {isPending ? "Deleting..." : "Delete Order"}
     </button>
   );
 }
@@ -64,37 +58,42 @@ export function DepositeOrder({ id, price }: { id: number; price: number }) {
   const ORDER_ADDR = process.env.NEXT_PUBLIC_ORDER_ADDR || "0x";
   const CURRENCY_ADDR = process.env.NEXT_PUBLIC_CURRENCY_ADDR || "0x";
 
-  const { config: configApporve } = usePrepareContractWrite({
+  const configApporve = {
     address: `0x${CURRENCY_ADDR}`,
-    abi: erc20ABI,
+    abi: erc20Abi,
     functionName: "approve",
     args: [`0x${ORDER_ADDR}`, BigInt(price)],
-  });
+  };
 
-  const { data: dataApprove, write: writeApprove } =
-    useContractWrite(configApporve);
+  const { data: dataApprove, writeContract: writeApprove } = useWriteContract();
   const {
     isSuccess: isSuccessApprove,
     isError: isErrorApprove,
     isLoading: isLoadingApprove,
-  } = useWaitForTransaction({ hash: dataApprove?.hash });
+  } = useWaitForTransactionReceipt({ hash: dataApprove });
 
-  const { config } = usePrepareContractWrite({
+  const config = {
     address: `0x${ORDER_ADDR}`,
     abi: orderAbi,
     functionName: "depositCurrency",
-    args: [id],
-  });
+    args: [BigInt(id)],
+  };
 
-  const { data, write } = useContractWrite(config);
-  const { isLoading, isSuccess, isError } = useWaitForTransaction({
-    hash: data?.hash,
+  const { data, writeContract } = useWriteContract();
+  const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
+    hash: data,
   });
 
   useEffect(() => {
     if (isSuccessApprove) {
-      write?.();
+      writeContract?.({
+        address: `0x${ORDER_ADDR}`,
+        abi: orderAbi,
+        functionName: "depositCurrency",
+        args: [BigInt(id)],
+      });
     }
+
     if (isSuccess) {
       alert("Order Deposited");
       refreshPage();
@@ -108,7 +107,12 @@ export function DepositeOrder({ id, price }: { id: number; price: number }) {
     <div>
       <button
         onClick={() => {
-          writeApprove?.();
+          writeApprove?.({
+            address: `0x${CURRENCY_ADDR}`,
+            abi: erc20Abi,
+            functionName: "approve",
+            args: [`0x${ORDER_ADDR}`, BigInt(price)],
+          });
         }}
         className="rounded-md border p-2 hover:bg-gray-100"
         disabled={isLoading || isLoadingApprove}
@@ -122,16 +126,16 @@ export function DepositeOrder({ id, price }: { id: number; price: number }) {
 export function ReceiveOrder({ id }: { id: number }) {
   const ORDER_ADDR = process.env.NEXT_PUBLIC_ORDER_ADDR || "0x";
 
-  const { config } = usePrepareContractWrite({
-    address: `0x${ORDER_ADDR}`,
-    abi: orderAbi,
-    functionName: "receiveGoods",
-    args: [id],
-  });
+  // const { config } = usePrepareContractWrite({
+  //   address: `0x${ORDER_ADDR}`,
+  //   abi: orderAbi,
+  //   functionName: "receiveGoods",
+  //   args: [id],
+  // });
 
-  const { data, write } = useContractWrite(config);
-  const { isLoading, isSuccess, isError } = useWaitForTransaction({
-    hash: data?.hash,
+  const { data, writeContract } = useWriteContract();
+  const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
+    hash: data,
   });
 
   useEffect(() => {
@@ -147,7 +151,12 @@ export function ReceiveOrder({ id }: { id: number }) {
   return (
     <button
       onClick={() => {
-        write?.();
+        writeContract?.({
+          address: `0x${ORDER_ADDR}`,
+          abi: orderAbi,
+          functionName: "receiveGoods",
+          args: [id],
+        });
       }}
       disabled={isLoading}
     >

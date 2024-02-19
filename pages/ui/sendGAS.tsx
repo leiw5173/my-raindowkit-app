@@ -1,9 +1,9 @@
 import * as React from "react";
-import { useSendTransaction, useWaitForTransaction } from "wagmi";
+import { useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 import { parseEther } from "viem";
 
 export function SendGAS() {
-  const { data: hash, sendTransaction, isLoading } = useSendTransaction();
+  const { data: hash, sendTransaction, isPending } = useSendTransaction();
 
   // submit handler
   async function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -15,18 +15,18 @@ export function SendGAS() {
   }
 
   // wait for transaction
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransaction(hash);
+  const { isPending: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({ hash });
 
   // render
   return (
     <form onSubmit={submit}>
       <input name="address" placeholder="0xA0Cf…251e" required />
       <input name="value" placeholder="0.5" required />
-      <button disabled={isLoading} type="submit">
-        {isLoading ? "Confirming..." : "Send"}
+      <button disabled={isPending} type="submit">
+        {isPending ? "Confirming..." : "Send"}
       </button>
-      {hash && <p>Transaction hash: {hash.hash}</p>}
+      {hash && <p>Transaction hash: {hash}</p>}
       {isConfirming && <p>Waiting for confirmation...</p>}
       {isConfirmed && <p>Transaction confirmed!</p>}
     </form>
