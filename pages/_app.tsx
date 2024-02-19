@@ -1,19 +1,20 @@
 import "../styles/globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   getDefaultWallets,
   RainbowKitProvider,
   Chain,
 } from "@rainbow-me/rainbowkit";
 import type { AppProps } from "next/app";
-import { configureChains, createConfig, WagmiConfig } from "wagmi";
+import { WagmiProvider, http } from "wagmi";
 import { goerli, mainnet, polygon, sepolia } from "wagmi/chains";
-import { publicProvider } from "wagmi/providers/public";
+import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 
-const neox: Chain = {
+const neox = {
   id: 12227330,
   name: "NeoX",
-  network: "testnet",
+
   iconUrl: "/NEO_512_512.png",
   iconBackground: "#fff",
   nativeCurrency: {
@@ -30,39 +31,28 @@ const neox: Chain = {
     etherscan: { name: "NeoXScan", url: "https://xt2scan.ngd.network/" },
   },
   testnet: true,
-};
+} as const satisfies Chain;
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [
-    mainnet,
-    polygon,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true"
-      ? [goerli, sepolia, neox]
-      : []),
-  ],
-  [publicProvider()]
-);
-
-const { connectors } = getDefaultWallets({
+const config = getDefaultConfig({
   appName: "IOT Marketplace",
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "PROJECT_ID",
-  chains,
+  chains: [mainnet, polygon, goerli, sepolia, neox],
+  transports: {
+    [(mainnet.id, polygon.id, goerli.id, sepolia.id, neox.id)]: http(),
+  },
 });
 
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-  webSocketPublicClient,
-});
+const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains}>
-        <Component {...pageProps} />
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider>
+          <Component {...pageProps} />
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
 
