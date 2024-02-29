@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import {
-  usePrepareContractWrite,
-  useContractWrite,
-  useWaitForTransaction,
-} from "wagmi";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { orderAbi } from "@/pages/lib/abi";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -28,17 +24,19 @@ export default function Page() {
   //     }
   //   }, 500);
 
-  const { config } = usePrepareContractWrite({
-    address: `0x${ORDER_ADDR}`,
-    abi: orderAbi,
-    functionName: "setPriceAndGoods",
-    args: [productName, parseInt(price) * 10 ** 10],
-    enabled: Boolean(productName.length > 0 && parseInt(price) > 0),
+  // const { config } = usePrepareContractWrite({
+  //   address: `0x${ORDER_ADDR}`,
+  //   abi: orderAbi,
+  //   functionName: "setPriceAndGoods",
+  //   args: [productName, parseInt(price) * 10 ** 10],
+  //   enabled: Boolean(productName.length > 0 && parseInt(price) > 0),
+  // });
+
+  const { data, isPending, writeContract } = useWriteContract();
+
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
+    hash: data,
   });
-
-  const { data, write } = useContractWrite(config);
-
-  const { isLoading, isSuccess } = useWaitForTransaction({ hash: data?.hash });
 
   return (
     <main>
@@ -50,7 +48,12 @@ export default function Page() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          write?.();
+          writeContract?.({
+            address: `0x${ORDER_ADDR}`,
+            abi: orderAbi,
+            functionName: "setPriceAndGoods",
+            args: [productName, parseInt(price) * 10 ** 10],
+          });
         }}
       >
         <label>
@@ -73,7 +76,7 @@ export default function Page() {
             value={price}
           />
         </label>
-        <button disabled={!write || isLoading}>
+        <button disabled={isPending || isLoading}>
           {isLoading ? "Creating Order" : "Create Order"}
         </button>
         {isSuccess && (
@@ -81,7 +84,7 @@ export default function Page() {
             Successfully created order!
             <div>
               <a
-                href={`https://xt2scan.ngd.network/tx/${data?.hash}`}
+                href={`https://xt2scan.ngd.network/tx/${data}`}
                 target="_blank"
                 rel="noreferrer"
               >
