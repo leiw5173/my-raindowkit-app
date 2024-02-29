@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import {
-  usePrepareContractWrite,
-  useContractWrite,
-  useWaitForTransaction,
-  useContractRead,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useReadContract,
 } from "wagmi";
 import { orderAbi } from "@/pages/lib/abi";
 import { Order } from "@/pages/lib/definitaions";
@@ -17,7 +16,7 @@ export default function Page() {
   const ORDER_ADDR = process.env.NEXT_PUBLIC_ORDER_ADDR || "0x";
 
   console.log(id);
-  const { data: orderData }: { data: Order | undefined } = useContractRead({
+  const { data: orderData }: { data: Order | undefined } = useReadContract({
     address: `0x${ORDER_ADDR}`,
     abi: orderAbi,
     functionName: "getOrder",
@@ -26,17 +25,17 @@ export default function Page() {
 
   console.log(orderData);
 
-  const { config } = usePrepareContractWrite({
-    address: `0x${ORDER_ADDR}`,
-    abi: orderAbi,
-    functionName: "updateOrder",
-    args: [id, productName, parseInt(price) * 10 ** 10],
-    enabled: Boolean(productName.length > 0 && parseInt(price) > 0),
-  });
+  // const { config } = usePrepareContractWrite({
+  //   address: `0x${ORDER_ADDR}`,
+  //   abi: orderAbi,
+  //   functionName: "updateOrder",
+  //   args: [id, productName, parseInt(price) * 10 ** 10],
+  //   enabled: Boolean(productName.length > 0 && parseInt(price) > 0),
+  // });
 
-  const { data, write } = useContractWrite(config);
+  const { data, isPending, writeContract } = useWriteContract();
 
-  const { isLoading, isSuccess } = useWaitForTransaction({ hash: data?.hash });
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash: data });
 
   return (
     <main>
@@ -48,7 +47,12 @@ export default function Page() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          write?.();
+          writeContract?.({
+            address: `0x${ORDER_ADDR}`,
+            abi: orderAbi,
+            functionName: "updateOrder",
+            args: [id, productName, parseInt(price) * 10 ** 10],
+          });
         }}
       >
         <label>
@@ -71,7 +75,7 @@ export default function Page() {
             value={price}
           />
         </label>
-        <button disabled={!write || isLoading}>
+        <button disabled={isPending || isLoading}>
           {isLoading ? "Updating Order" : "Update Order"}
         </button>
         {isSuccess && (
@@ -79,7 +83,7 @@ export default function Page() {
             Successfully created order!
             <div>
               <a
-                href={`https://xt2scan.ngd.network/tx/${data?.hash}`}
+                href={`https://xt2scan.ngd.network/tx/${data}`}
                 target="_blank"
                 rel="noreferrer"
               >
