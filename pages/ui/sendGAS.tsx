@@ -27,7 +27,7 @@ export function SendGAS() {
         {isPending ? "Confirming..." : "Send"}
       </button>
       {hash && <p>Transaction hash: {hash}</p>}
-      {isConfirming && <p>Waiting for confirmation...</p>}
+      {isConfirming && hash && <p>Waiting for confirmation...</p>}
       {isConfirmed && <p>Transaction confirmed!</p>}
     </form>
   );
