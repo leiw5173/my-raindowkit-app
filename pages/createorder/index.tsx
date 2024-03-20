@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { orderAbi } from "@/pages/lib/abi";
+import { orderAbi } from "@/lib/abi";
 import { useDebouncedCallback } from "use-debounce";
 
 export default function Page() {

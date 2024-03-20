@@ -2,7 +2,7 @@ import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { erc20Abi } from "viem";
-import { orderAbi } from "@/pages/lib/abi";
+import { orderAbi } from "@/lib/abi";
 import { useEffect } from "react";
 
 const refreshPage = () => {
