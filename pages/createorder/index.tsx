@@ -52,7 +52,10 @@ export default function Page() {
             address: `0x${ORDER_ADDR}`,
             abi: orderAbi,
             functionName: "setPriceAndGoods",
-            args: [productName, parseInt(price) * 10 ** 10],
+            args: [
+              productName,
+              parseInt((Number(price) * 10 ** 10).toString()),
+            ],
           });
         }}
       >
