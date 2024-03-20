@@ -2,8 +2,8 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import { SendGAS } from "./ui/sendGAS";
-import OrderTable from "./ui/orderTable";
+import { SendGAS } from "../components/sendGAS";
+import OrderTable from "../components/orderTable";
 
 const Home: NextPage = () => {
   return (

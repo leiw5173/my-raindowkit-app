@@ -5,8 +5,8 @@ import {
   useWaitForTransactionReceipt,
   useReadContract,
 } from "wagmi";
-import { orderAbi } from "@/pages/lib/abi";
-import { Order } from "@/pages/lib/definitaions";
+import { orderAbi } from "@/lib/abi";
+import { Order } from "@/lib/definitaions";
 import { useRouter } from "next/router";
 
 export default function Page() {
