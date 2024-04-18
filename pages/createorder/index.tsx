@@ -87,7 +87,7 @@ export default function Page() {
             Successfully created order!
             <div>
               <a
-                href={`https://xt2scan.ngd.network/tx/${data}`}
+                href={`https://xt3scan.ngd.network/tx/${data}`}
                 target="_blank"
                 rel="noreferrer"
               >
