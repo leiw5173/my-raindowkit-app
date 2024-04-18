@@ -12,7 +12,7 @@ import { goerli, mainnet, polygon, sepolia } from "wagmi/chains";
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 
 const neox = {
-  id: 12227330,
+  id: 12227331,
   name: "NeoX",
 
   iconUrl: "/NEO_512_512.png",
@@ -27,8 +27,8 @@ const neox = {
     default: { http: ["https://neoxseed1.ngd.network/"] },
   },
   blockExplorers: {
-    default: { name: "NeoXScan", url: "https://xt2scan.ngd.network/" },
-    etherscan: { name: "NeoXScan", url: "https://xt2scan.ngd.network/" },
+    default: { name: "NeoXScan", url: "https://xt3scan.ngd.network/" },
+    etherscan: { name: "NeoXScan", url: "https://xt3scan.ngd.network/" },
   },
   testnet: true,
 } as const satisfies Chain;
